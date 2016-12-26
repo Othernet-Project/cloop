@@ -1,7 +1,7 @@
 #ifndef _COMPRESSED_LOOP_H
 #define _COMPRESSED_LOOP_H
 
-#define CLOOP_HEADROOM 128
+#define CLOOP_HEADROOM 120
 
 /* The cloop header usually looks like this:          */
 /* #!/bin/sh                                          */
@@ -13,8 +13,10 @@
 struct cloop_head
 {
 	char preamble[CLOOP_HEADROOM];
-	u_int32_t block_size;
-	u_int32_t num_blocks;
+    unsigned int padding;
+    unsigned int original_size;
+	unsigned int block_size;
+	unsigned int num_blocks;
 };
 
 /* data_index (num_blocks 64bit pointers, network order)...      */

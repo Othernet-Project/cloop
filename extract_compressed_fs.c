@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
 	    compressed_buffer_size, uncompressed_buffer_size;
 	struct cloop_head head;
 	unsigned char *compressed_buffer, *uncompressed_buffer;
+    u_int32_t total_uncompressed;
+
 	loff_t *offsets;
 	/* For statistics */
 	loff_t compressed_bytes, uncompressed_bytes, block_modulo;
@@ -96,9 +98,10 @@ int main(int argc, char *argv[])
 
 	total_blocks = ntohl(head.num_blocks);
 	uncompressed_buffer_size = ntohl(head.block_size);
+    total_uncompressed = ntohl(head.original_size);
 
-	fprintf(stderr, "%s: compressed input has %u blocks of size %u.\n",
-		argv[0], total_blocks, uncompressed_buffer_size);
+	fprintf(stderr, "%s: compressed input has %u blocks of size %u, original size %u\n",
+		argv[0], total_blocks, uncompressed_buffer_size, total_uncompressed);
 
 
 	/* The maximum size of a compressed block, due to the
@@ -212,5 +215,6 @@ int main(int argc, char *argv[])
 		write(output, uncompressed_buffer, destlen);
 		fdatasync(output);
 	}
+    fprintf(stderr, "extracted length %u, length in header %u.\n", uncompressed_bytes, total_uncompressed);
 	return 0;
 }

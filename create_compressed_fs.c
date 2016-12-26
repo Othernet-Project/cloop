@@ -63,6 +63,8 @@ void free_cb_list(struct cb_list *cbl)
  free(cbl);
 }
 
+unsigned long long total_uncompressed=0,total_compressed=0;
+
 /* Now using the goto style because it is quicker to read */
 static struct cb_list *create_compressed_blocks(int handle, unsigned long
                           blocksize, unsigned long *numblocks)
@@ -70,7 +72,6 @@ static struct cb_list *create_compressed_blocks(int handle, unsigned long
  struct cb_list *cbl,**cbp=&cbl;
  unsigned long i=0;
  unsigned int last;
- unsigned long long total_uncompressed=0,total_compressed=0;
  unsigned long maxlen = blocksize + blocksize/1000 + 12;
  char *compressed, *uncompressed;
  if((uncompressed=malloc(blocksize))==NULL)
@@ -94,6 +95,7 @@ static struct cb_list *create_compressed_blocks(int handle, unsigned long
      if(r<=0) { last=1; break; }
      total+=r;
     }
+   if (total == 0) break;
    total_uncompressed += total;
    if (total != blocksize)
     {
@@ -186,9 +188,13 @@ int main(int argc, char **argv)
  memcpy(head.preamble, CLOOP_PREAMBLE, sizeof(CLOOP_PREAMBLE));
  head.block_size = htonl(blocksize);
  head.num_blocks = htonl(numblocks);
+ head.original_size = htonl(total_uncompressed);
 
- fprintf(stderr, "Block size %lu, number of blocks %lu.\n",
-         blocksize, numblocks);
+ fprintf(stderr, "Block size %lu, number of blocks %lu, original size %lu\n",
+         blocksize, numblocks, total_uncompressed);
+
+ fprintf(stderr, "Block size %lu, number of blocks %lu, original size %lu\n",
+         ntohl(head.block_size), ntohl(head.num_blocks), ntohl(head.original_size));
 
  bytes_so_far = sizeof(head) + sizeof(loff_t) * (numblocks + 1);
 
