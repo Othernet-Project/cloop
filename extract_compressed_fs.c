@@ -45,6 +45,7 @@ struct compressed_block
 	void *data;
 };
 
+
 int main(int argc, char *argv[])
 {
 	int handle, output;
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 	    compressed_buffer_size, uncompressed_buffer_size;
 	struct cloop_head head;
 	unsigned char *compressed_buffer, *uncompressed_buffer;
-    u_int32_t total_uncompressed;
+	unsigned int total_uncompressed;
 
 	loff_t *offsets;
 	/* For statistics */
@@ -215,10 +216,8 @@ int main(int argc, char *argv[])
 		write(output, uncompressed_buffer, destlen);
 		fdatasync(output);
 	}
-    
-    fprintf(stderr, "extracted length %u, length in header %u.\n", uncompressed_bytes, total_uncompressed);
     if (uncompressed_bytes > total_uncompressed) {
-        fprintf(stderr, "extracted length %u is more than length in header %u, truncating!\n", uncompressed_bytes, total_uncompressed);
+        fprintf(stderr, "extracted length is more than length in header %u, truncating\n", total_uncompressed);
         ftruncate(output, total_uncompressed);
     }
     close(output);
