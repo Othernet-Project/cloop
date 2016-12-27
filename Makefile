@@ -50,7 +50,7 @@ create_compressed_fs: advancecomp-1.15/advfs
 	ln -f $< $@
 
 advancecomp-1.15/advfs:
-	( cd advancecomp-1.15 ; ./configure && $(MAKE) advfs )
+	( cd advancecomp-1.15 ; ./configure $(CFG_OPTS) && $(MAKE) $(CFG_OPTS) advfs )
 
 extract_compressed_fs: extract_compressed_fs.c
 	$(CC) -Wall -O2 -s -o $@ $< -lz
